@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -288,31 +288,60 @@
             cursor: pointer;
         }
         
-        /* Camera container */
+        /* Camera container - UPDATED FOR BETTER UX */
         #camera-container {
             display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            background-color: rgba(10, 42, 72, 0.9);
+            padding: 15px;
+            border-radius: 10px;
+            border: 3px solid var(--fortnite-yellow);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+            width: 80%;
+            max-width: 400px;
             text-align: center;
-            margin: 20px auto;
         }
         
         #camera-stream {
-            max-width: 100%;
-            border: 3px solid var(--fortnite-yellow);
+            width: 100%;
+            max-height: 300px;
             border-radius: 8px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+            object-fit: cover;
         }
         
         #camera-controls {
             margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
         
         #capture-button {
             background: linear-gradient(45deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+            flex: 1;
+            max-width: 150px;
         }
         
         #cancel-camera-button {
             background: linear-gradient(45deg, #d32f2f 0%, #f44336 100%);
-            margin-left: 10px;
+            flex: 1;
+            max-width: 150px;
+        }
+        
+        /* Semi-transparent overlay behind camera */
+        .camera-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
         }
     </style>
 </head>
@@ -347,11 +376,14 @@
             <img id="image-preview" src="" alt="Image Preview">
         </div>
         
-        <!-- Camera container -->
+        <!-- Camera overlay -->
+        <div class="camera-overlay" id="camera-overlay"></div>
+        
+        <!-- Camera container - now in a modal-like format -->
         <div id="camera-container">
             <video id="camera-stream" autoplay></video>
             <div id="camera-controls">
-                <button id="capture-button" class="button">Capture Photo</button>
+                <button id="capture-button" class="button">Take Photo</button>
                 <button id="cancel-camera-button" class="button">Cancel</button>
             </div>
         </div>
@@ -441,26 +473,31 @@
         function startCamera() {
             closeImageOptionsModal();
             const cameraContainer = document.getElementById('camera-container');
+            const cameraOverlay = document.getElementById('camera-overlay');
             const videoElement = document.getElementById('camera-stream');
             
             // Hide image preview if it was shown
             document.getElementById('image-preview').style.display = 'none';
             
+            // Show the camera container and overlay
             cameraContainer.style.display = 'block';
+            cameraOverlay.style.display = 'block';
+            
             log('Starting camera');
             
-            // Set up camera constraints based on device type
-            let constraints = { video: true, audio: false };
+            // Set up camera constraints for still picture (not video recording)
+            let constraints = { 
+                video: {
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }, 
+                audio: false 
+            };
             
             // If it's a mobile device, try to use the rear camera
             if (isMobileDevice()) {
                 log('Mobile device detected, attempting to use rear camera');
-                constraints = {
-                    video: {
-                        facingMode: { exact: "environment" } // Use the rear camera
-                    },
-                    audio: false
-                };
+                constraints.video.facingMode = { exact: "environment" }; // Use the rear camera
             }
             
             navigator.mediaDevices.getUserMedia(constraints)
@@ -477,7 +514,13 @@
                     // fall back to any available camera
                     if (isMobileDevice() && err.name === 'OverconstrainedError') {
                         log('Falling back to any available camera');
-                        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                        navigator.mediaDevices.getUserMedia({ 
+                            video: {
+                                width: { ideal: 1280 },
+                                height: { ideal: 720 }
+                            }, 
+                            audio: false 
+                        })
                             .then(function(mediaStream) {
                                 stream = mediaStream;
                                 videoElement.srcObject = mediaStream;
@@ -499,7 +542,10 @@
         
         function closeCamera() {
             const cameraContainer = document.getElementById('camera-container');
+            const cameraOverlay = document.getElementById('camera-overlay');
+            
             cameraContainer.style.display = 'none';
+            cameraOverlay.style.display = 'none';
             
             if (stream) {
                 stream.getTracks().forEach(track => {
@@ -509,6 +555,14 @@
                 log('Camera stopped');
             }
         }
+        
+        // Allow clicking on the overlay to cancel camera
+        document.getElementById('camera-overlay').addEventListener('click', function(event) {
+            // Only close if clicking directly on the overlay, not the camera container
+            if (event.target === this) {
+                closeCamera();
+            }
+        });
         
         // Capture photo from camera
         document.getElementById('capture-button').addEventListener('click', function() {
