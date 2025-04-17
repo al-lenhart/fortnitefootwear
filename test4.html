@@ -411,6 +411,11 @@
             }
         }
         
+        // Detect if the user is on a mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+        
         // Modal functions
         function openImageOptionsModal() {
             document.getElementById('image-options-modal').style.display = 'block';
@@ -444,7 +449,21 @@
             cameraContainer.style.display = 'block';
             log('Starting camera');
             
-            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+            // Set up camera constraints based on device type
+            let constraints = { video: true, audio: false };
+            
+            // If it's a mobile device, try to use the rear camera
+            if (isMobileDevice()) {
+                log('Mobile device detected, attempting to use rear camera');
+                constraints = {
+                    video: {
+                        facingMode: { exact: "environment" } // Use the rear camera
+                    },
+                    audio: false
+                };
+            }
+            
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(function(mediaStream) {
                     stream = mediaStream;
                     videoElement.srcObject = mediaStream;
@@ -452,9 +471,29 @@
                     log('Camera started successfully');
                 })
                 .catch(function(err) {
-                    log('Error accessing camera', { error: err.message });
-                    alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
-                    closeCamera();
+                    log('Error accessing rear camera', { error: err.message });
+                    
+                    // If we couldn't access the rear camera (might not exist or be in use),
+                    // fall back to any available camera
+                    if (isMobileDevice() && err.name === 'OverconstrainedError') {
+                        log('Falling back to any available camera');
+                        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                            .then(function(mediaStream) {
+                                stream = mediaStream;
+                                videoElement.srcObject = mediaStream;
+                                videoElement.play();
+                                log('Camera fallback successful');
+                            })
+                            .catch(function(fallbackErr) {
+                                log('Error accessing any camera', { error: fallbackErr.message });
+                                alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
+                                closeCamera();
+                            });
+                    } else {
+                        // For non-mobile or other errors
+                        alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
+                        closeCamera();
+                    }
                 });
         }
         
