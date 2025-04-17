@@ -157,6 +157,10 @@
             display: none;
         }
         
+        #camera-input {
+            display: none;
+        }
+        
         .loader {
             border: 5px solid rgba(255, 255, 255, 0.3);
             border-top: 5px solid var(--fortnite-yellow);
@@ -221,6 +225,95 @@
                 text-shadow: 0 0 10px rgba(31, 162, 255, 0.8), 0 0 20px rgba(31, 162, 255, 0.5), 0 0 30px rgba(31, 162, 255, 0.3);
             }
         }
+        
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #0a2a48 0%, #1c3b5a 100%);
+            margin: 15% auto;
+            padding: 25px;
+            border: 2px solid var(--fortnite-blue);
+            border-radius: 12px;
+            width: 300px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+        }
+        
+        .modal-option {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin: 10px auto;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        #take-photo-btn {
+            background: linear-gradient(45deg, var(--fortnite-teal) 0%, var(--fortnite-blue) 100%);
+        }
+        
+        #upload-photo-btn {
+            background: linear-gradient(45deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+        }
+        
+        .close-modal {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            margin-top: -15px;
+        }
+        
+        .close-modal:hover,
+        .close-modal:focus {
+            color: var(--fortnite-yellow);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        /* Camera container */
+        #camera-container {
+            display: none;
+            text-align: center;
+            margin: 20px auto;
+        }
+        
+        #camera-stream {
+            max-width: 100%;
+            border: 3px solid var(--fortnite-yellow);
+            border-radius: 8px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        #camera-controls {
+            margin-top: 15px;
+        }
+        
+        #capture-button {
+            background: linear-gradient(45deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+        }
+        
+        #cancel-camera-button {
+            background: linear-gradient(45deg, #d32f2f 0%, #f44336 100%);
+            margin-left: 10px;
+        }
     </style>
 </head>
 <body>
@@ -236,7 +329,7 @@
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <div class="step-text">Upload your picture using the "Upload Shoe Image" button below.</div>
+                <div class="step-text">Upload your picture using the "Upload Fortnite Character Image Here" button below.</div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
@@ -246,11 +339,21 @@
 
         <!-- Image Upload Section -->
         <div class="image-upload">
-            <button id="upload-button" class="button" onclick="document.getElementById('file-input').click()">Upload Shoe Image</button>
+            <button id="upload-button" class="button" onclick="openImageOptionsModal()">Upload Fortnite Character Image Here</button>
             <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+            <input type="file" id="camera-input" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
             <div id="status"></div>
             <div class="loader" id="loader"></div>
             <img id="image-preview" src="" alt="Image Preview">
+        </div>
+        
+        <!-- Camera container -->
+        <div id="camera-container">
+            <video id="camera-stream" autoplay></video>
+            <div id="camera-controls">
+                <button id="capture-button" class="button">Capture Photo</button>
+                <button id="cancel-camera-button" class="button">Cancel</button>
+            </div>
         </div>
 
         <div class="search-container">
@@ -264,6 +367,16 @@
         
         <div class="debug-toggle" onclick="toggleDebug()">Show Debug Info</div>
         <div id="debug-info"></div>
+    </div>
+    
+    <!-- Modal for image options -->
+    <div id="image-options-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeImageOptionsModal()">&times;</span>
+            <h3>Choose an Option</h3>
+            <button id="take-photo-btn" class="button modal-option" onclick="startCamera()">Take Photo</button>
+            <button id="upload-photo-btn" class="button modal-option" onclick="document.getElementById('file-input').click(); closeImageOptionsModal();">Upload Photo</button>
+        </div>
     </div>
     
     <script>
@@ -298,13 +411,112 @@
             }
         }
         
+        // Modal functions
+        function openImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'block';
+            log('Image options modal opened');
+        }
+        
+        function closeImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'none';
+            log('Image options modal closed');
+        }
+        
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('image-options-modal');
+            if (event.target == modal) {
+                closeImageOptionsModal();
+            }
+        }
+        
+        // Camera handling
+        let stream = null;
+        
+        function startCamera() {
+            closeImageOptionsModal();
+            const cameraContainer = document.getElementById('camera-container');
+            const videoElement = document.getElementById('camera-stream');
+            
+            // Hide image preview if it was shown
+            document.getElementById('image-preview').style.display = 'none';
+            
+            cameraContainer.style.display = 'block';
+            log('Starting camera');
+            
+            navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+                .then(function(mediaStream) {
+                    stream = mediaStream;
+                    videoElement.srcObject = mediaStream;
+                    videoElement.play();
+                    log('Camera started successfully');
+                })
+                .catch(function(err) {
+                    log('Error accessing camera', { error: err.message });
+                    alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
+                    closeCamera();
+                });
+        }
+        
+        function closeCamera() {
+            const cameraContainer = document.getElementById('camera-container');
+            cameraContainer.style.display = 'none';
+            
+            if (stream) {
+                stream.getTracks().forEach(track => {
+                    track.stop();
+                });
+                stream = null;
+                log('Camera stopped');
+            }
+        }
+        
+        // Capture photo from camera
+        document.getElementById('capture-button').addEventListener('click', function() {
+            if (!stream) return;
+            
+            const videoElement = document.getElementById('camera-stream');
+            const canvas = document.createElement('canvas');
+            const context = canvas.getContext('2d');
+            
+            // Set canvas size to match video dimensions
+            canvas.width = videoElement.videoWidth;
+            canvas.height = videoElement.videoHeight;
+            
+            // Draw the video frame to the canvas
+            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+            
+            // Convert to data URL and create a blob
+            canvas.toBlob(function(blob) {
+                log('Photo captured from camera', { width: canvas.width, height: canvas.height });
+                
+                // Create a File object
+                const file = new File([blob], "camera-photo.jpg", { type: "image/jpeg" });
+                
+                // Use the existing image processing function
+                processImageFile(file);
+                
+                // Close the camera
+                closeCamera();
+            }, 'image/jpeg', 0.8);
+        });
+        
+        // Cancel camera button
+        document.getElementById('cancel-camera-button').addEventListener('click', function() {
+            closeCamera();
+        });
+        
         // Function to handle image upload
         function handleImageUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
             
             log('File selected', { name: file.name, type: file.type, size: file.size + ' bytes' });
-            
+            processImageFile(file);
+        }
+        
+        // Function to process an image file
+        function processImageFile(file) {
             const reader = new FileReader();
             const preview = document.getElementById('image-preview');
             const status = document.getElementById('status');
