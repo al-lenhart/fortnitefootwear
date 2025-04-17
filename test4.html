@@ -157,10 +157,6 @@
             display: none;
         }
 
-        #camera-input {
-            display: none;
-        }
-
         .loader {
             border: 5px solid rgba(255, 255, 255, 0.3);
             border-top: 5px solid var(--fortnite-yellow);
@@ -287,70 +283,6 @@
             text-decoration: none;
             cursor: pointer;
         }
-
-        /* Camera container - FIXED FOR BETTER UX */
-        #camera-container {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1000;
-            background-color: rgba(10, 42, 72, 0.9);
-            padding: 15px;
-            border-radius: 10px;
-            border: 3px solid var(--fortnite-yellow);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            width: 90%;
-            max-width: 400px;
-            max-height: 80vh;
-            overflow: auto;
-            text-align: center;
-        }
-
-        #camera-stream {
-            width: 100%;
-            max-height: 50vh;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        #camera-controls {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            position: sticky;
-            bottom: 0;
-            padding: 10px 0;
-            background-color: rgba(10, 42, 72, 0.9);
-        }
-
-        /* Responsive adjustments for very small screens */
-        @media (max-height: 500px) {
-            #camera-container {
-                top: 0;
-                transform: translateX(-50%);
-                max-height: 100vh;
-                border-radius: 0;
-            }
-            
-            #camera-stream {
-                max-height: 40vh;
-            }
-        }
-
-        /* Semi-transparent overlay behind camera */
-        .camera-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 999;
-        }
     </style>
 </head>
 <body>
@@ -365,7 +297,7 @@
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <div class="step-text">Upload your picture using the "Upload Fortnite Character Here" button below.</div>
+                <div class="step-text">Upload your picture using the "Upload Fortnite Character Image Here" button below.</div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
@@ -376,20 +308,9 @@
         <div class="image-upload">
             <button id="upload-button" class="button" onclick="openImageOptionsModal()">Upload Fortnite Character Image Here</button>
             <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
-            <input type="file" id="camera-input" accept="image/*" capture="environment" onchange="handleImageUpload(event)">
             <div id="status"></div>
             <div class="loader" id="loader"></div>
             <img id="image-preview" src="" alt="Image Preview">
-        </div>
-
-        <div class="camera-overlay" id="camera-overlay"></div>
-
-        <div id="camera-container">
-            <video id="camera-stream" autoplay></video>
-            <div id="camera-controls">
-                <button id="capture-button" class="button">Take Photo</button>
-                <button id="cancel-camera-button" class="button">Cancel</button>
-            </div>
         </div>
 
         <div class="search-container">
@@ -409,7 +330,7 @@
         <div class="modal-content">
             <span class="close-modal" onclick="closeImageOptionsModal()">&times;</span>
             <h3>Choose an Option</h3>
-            <button id="take-photo-btn" class="button modal-option" onclick="startCamera()">Take Photo</button>
+            <button id="take-photo-btn" class="button modal-option" onclick="takeMobilePhoto()">Take Photo</button>
             <button id="upload-photo-btn" class="button modal-option" onclick="document.getElementById('file-input').click(); closeImageOptionsModal();">Upload Photo</button>
         </div>
     </div>
@@ -470,137 +391,33 @@
             }
         }
 
-        // Camera handling
-        let stream = null;
-
-        function startCamera() {
+        // Simplified approach: Use native file input with capture attribute for mobile
+        function takeMobilePhoto() {
             closeImageOptionsModal();
-            const cameraContainer = document.getElementById('camera-container');
-            const cameraOverlay = document.getElementById('camera-overlay');
-            const videoElement = document.getElementById('camera-stream');
-
-            // Hide image preview if it was shown
-            document.getElementById('image-preview').style.display = 'none';
-
-            // Show the camera container and overlay
-            cameraContainer.style.display = 'block';
-            cameraOverlay.style.display = 'block';
-
-            log('Starting camera');
-
-            // Set up camera constraints for still picture (not video recording)
-            let constraints = {
-                video: {
-                    width: { ideal: 1280 },
-                    height: { ideal: 720 }
-                },
-                audio: false
-            };
-
-            // If it's a mobile device, try to use the rear camera
+            log('Taking photo using native camera');
+            
+            // Create a temporary file input with capture attribute
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.accept = 'image/*';
+            
+            // If on mobile, use the camera directly
             if (isMobileDevice()) {
-                log('Mobile device detected, attempting to use rear camera');
-                constraints.video.facingMode = { exact: "environment" }; // Use the rear camera
+                tempInput.setAttribute('capture', 'environment'); // Use rear camera by default
             }
-
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(mediaStream) {
-                    stream = mediaStream;
-                    videoElement.srcObject = mediaStream;
-                    videoElement.play();
-                    log('Camera started successfully');
-                })
-                .catch(function(err) {
-                    log('Error accessing rear camera', { error: err.message });
-
-                    // If we couldn't access the rear camera (might not exist or be in use),
-                    // fall back to any available camera
-                    if (isMobileDevice() && err.name === 'OverconstrainedError') {
-                        log('Falling back to any available camera');
-                        navigator.mediaDevices.getUserMedia({
-                            video: {
-                                width: { ideal: 1280 },
-                                height: { ideal: 720 }
-                            },
-                            audio: false
-                        })
-                            .then(function(mediaStream) {
-                                stream = mediaStream;
-                                videoElement.srcObject = mediaStream;
-                                videoElement.play();
-                                log('Camera fallback successful');
-                            })
-                            .catch(function(fallbackErr) {
-                                log('Error accessing any camera', { error: fallbackErr.message });
-                                alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
-                                closeCamera();
-                            });
-                    } else {
-                        // For non-mobile or other errors
-                        alert('Could not access camera. Please check your permissions or try uploading a photo instead.');
-                        closeCamera();
-                    }
-                });
+            
+            // Add event listener to handle the photo
+            tempInput.addEventListener('change', function(event) {
+                handleImageUpload(event);
+                // Remove the temp input after use
+                document.body.removeChild(tempInput);
+            });
+            
+            // Append to body (invisible) and trigger click
+            tempInput.style.display = 'none';
+            document.body.appendChild(tempInput);
+            tempInput.click();
         }
-
-        function closeCamera() {
-            const cameraContainer = document.getElementById('camera-container');
-            const cameraOverlay = document.getElementById('camera-overlay');
-
-            cameraContainer.style.display = 'none';
-            cameraOverlay.style.display = 'none';
-
-            if (stream) {
-                stream.getTracks().forEach(track => {
-                    track.stop();
-                });
-                stream = null;
-                log('Camera stopped');
-            }
-        }
-
-        // Allow clicking on the overlay to cancel camera
-        document.getElementById('camera-overlay').addEventListener('click', function(event) {
-            // Only close if clicking directly on the overlay, not the camera container
-            if (event.target === this) {
-                closeCamera();
-            }
-        });
-
-        // Capture photo from camera
-        document.getElementById('capture-button').addEventListener('click', function() {
-            if (!stream) return;
-
-            const videoElement = document.getElementById('camera-stream');
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-
-            // Set canvas size to match video dimensions
-            canvas.width = videoElement.videoWidth;
-            canvas.height = videoElement.videoHeight;
-
-            // Draw the video frame to the canvas
-            context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-
-            // Convert to data URL and create a blob
-            canvas.toBlob(function(blob) {
-                log('Photo captured from camera', { width: canvas.width, height: canvas.height });
-
-                // Create a File object
-                const file = new File([blob], "camera-photo.jpg", { type: "image/jpeg" });
-
-                // Use the existing image processing function
-                processImageFile(file);
-
-                // Close the camera
-                closeCamera();
-            }, 'image/jpeg', 0.8);
-        });
-
-        // Cancel camera button
-        document.getElementById('cancel-camera-button').addEventListener('click', function() {
-            closeCamera();
-        });
 
         // Function to handle image upload
         function handleImageUpload(event) {
