@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Fortnite Footwear Finder - Roboflow Project</title>
-  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&family=Oswald:wght@500;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -12,7 +12,7 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Anton', sans-serif;
+      font-family: 'Roboto', sans-serif;
       background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
       color: #fff;
     }
@@ -24,17 +24,26 @@
       background-color: #1e1e2f;
     }
 
+    h1, h2, .project-link {
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 700;
+    }
+
     header h1 {
       font-size: 3rem;
       margin-bottom: 15px;
       color: #00ffe7;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     }
 
     header p {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       max-width: 700px;
       margin: 0 auto;
       color: #ccc;
+      line-height: 1.5;
     }
 
     .linkedin-link {
@@ -50,7 +59,7 @@
       border-radius: 6px;
       text-decoration: none;
       font-size: 0.9rem;
-      font-family: sans-serif;
+      font-weight: 700;
       transition: background-color 0.3s;
     }
 
@@ -61,7 +70,6 @@
     .project-link {
       text-align: center;
       font-size: 1.6rem;
-      font-weight: bold;
       margin: 30px 20px;
     }
 
@@ -90,6 +98,7 @@
       font-size: 1.8rem;
       color: #00ffe7;
       margin-top: 40px;
+      text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
     }
 
     p, li {
@@ -100,6 +109,11 @@
 
     ul {
       padding-left: 20px;
+    }
+
+    strong {
+      color: #fff;
+      font-weight: 700;
     }
 
     .images {
@@ -141,6 +155,9 @@
       border-radius: 8px;
       text-decoration: none;
       transition: 0.3s;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
 
     .cta a:hover {
@@ -195,6 +212,7 @@
       background-color: #282c34;
       color: #fff;
       border: none;
+      font-family: 'Roboto', sans-serif;
     }
 
     footer {
@@ -203,6 +221,7 @@
       padding: 20px;
       color: #aaa;
       margin-top: 60px;
+      font-size: 0.9rem;
     }
 
     @media (max-width: 768px) {
@@ -228,7 +247,7 @@
       <a href="https://www.linkedin.com/in/alanlenhart" target="_blank">👤 Connect on LinkedIn</a>
     </div>
     <h1>Fortnite Footwear Finder</h1>
-    <p>Fortnite is one of the world’s most popular online games, boasting millions of players and a massive cultural footprint. Known for its vibrant skins and iconic crossovers, it’s more than a game—it’s a global phenomenon.</p>
+    <p>Fortnite is one of the world's most popular online games, boasting millions of players and a massive cultural footprint. Known for its vibrant skins and iconic crossovers, it's more than a game—it's a global phenomenon.</p>
   </header>
 
   <div class="project-link">
@@ -237,14 +256,14 @@
 
   <section>
     <h2>👟 The Idea</h2>
-    <p>Ever see a pair of kicks in Fortnite and wonder what they're called in real life? It’s not as easy as you’d think. While some shoes have obvious names, many don’t match their real-world names at all.</p>
+    <p>Ever see a pair of kicks in Fortnite and wonder what they're called in real life? It's not as easy as you'd think. While some shoes have obvious names, many don't match their real-world names at all.</p>
     <p>For example:</p>
     <ul>
-      <li><strong>“Jordan 11 University Blue”</strong> in-game = <strong>Jordan 11 Retro Pantone</strong> IRL</li>
-      <li><strong>“Jordan 11 Black/Gym Red”</strong> in-game = <strong>Jordan 11 Playoffs Bred</strong> IRL</li>
-      <li><strong>“Nike Cortez Leather OG”</strong> in-game = <strong>Nike Cortez Basic Leather Forrest Gump</strong> IRL</li>
+      <li><strong>"Jordan 11 University Blue"</strong> in-game = <strong>Jordan 11 Retro Pantone</strong> IRL</li>
+      <li><strong>"Jordan 11 Black/Gym Red"</strong> in-game = <strong>Jordan 11 Playoffs Bred</strong> IRL</li>
+      <li><strong>"Nike Cortez Leather OG"</strong> in-game = <strong>Nike Cortez Basic Leather Forrest Gump</strong> IRL</li>
     </ul>
-    <p>This project uses Roboflow’s computer vision to help you identify Fortnite footwear and find them online easily.</p>
+    <p>This project uses Roboflow's computer vision to help you identify Fortnite footwear and find them online easily.</p>
   </section>
 
   <section>
@@ -261,7 +280,7 @@
     <h2>📱 Try It Yourself</h2>
     <p>Ready to test it? Deploy the model directly on your iPhone by clicking below:</p>
     <a href="https://demo.roboflow.com/buy-fortnite-shoes-irl/4?publishable_key=rf_RpE0bHiQm5MbD1aeGRca8gO8Dl13" target="_blank">Launch the Roboflow Model</a>
-    <p>📌 Pro tip: Open one of the Fortnite shoe videos below on your desktop. Then, point your phone’s camera (with Roboflow running) at the screen and watch the model detect sneakers live!</p>
+    <p>📌 Pro tip: Open one of the Fortnite shoe videos below on your desktop. Then, point your phone's camera (with Roboflow running) at the screen and watch the model detect sneakers live!</p>
   </section>
 
   <section class="video-section">
