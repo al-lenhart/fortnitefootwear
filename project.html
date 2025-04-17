@@ -3,40 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <title>Fortnite Footwear Finder - Roboflow Project</title>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Anton', sans-serif;
       background: linear-gradient(to right, #0f0c29, #302b63, #24243e);
       color: #fff;
     }
 
     header {
+      position: relative;
       text-align: center;
-      padding: 40px 20px 20px;
+      padding: 50px 20px 30px;
       background-color: #1e1e2f;
     }
 
     header h1 {
-      font-size: 2.8rem;
-      margin-bottom: 10px;
+      font-size: 3rem;
+      margin-bottom: 15px;
       color: #00ffe7;
     }
 
     header p {
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       max-width: 700px;
       margin: 0 auto;
       color: #ccc;
     }
 
+    .linkedin-link {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+    }
+
+    .linkedin-link a {
+      padding: 10px 16px;
+      background-color: #0e76a8;
+      color: white;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-family: sans-serif;
+      transition: background-color 0.3s;
+    }
+
+    .linkedin-link a:hover {
+      background-color: #0b5d8d;
+    }
+
     .project-link {
       text-align: center;
-      font-size: 2rem;
+      font-size: 1.6rem;
       font-weight: bold;
-      margin: 40px 20px;
-      color: #FFD700;
+      margin: 30px 20px;
+    }
+
+    .project-link a {
+      color: #00ffe7;
+      text-decoration: none;
+      border: 2px solid #00ffe7;
+      padding: 10px 20px;
+      border-radius: 8px;
+      transition: all 0.3s;
+    }
+
+    .project-link a:hover {
+      background-color: #00ffe7;
+      color: #000;
+      box-shadow: 0 0 15px #00ffe7;
     }
 
     section {
@@ -74,6 +115,11 @@
       max-width: 450px;
       border-radius: 10px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+      transition: transform 0.3s ease;
+    }
+
+    .images img:hover {
+      transform: scale(1.05);
     }
 
     .cta {
@@ -89,32 +135,66 @@
       margin-top: 10px;
       font-size: 1.1rem;
       font-weight: bold;
-      color: #1e90ff;
+      color: #00ffe7;
+      border: 2px solid #00ffe7;
+      padding: 10px 20px;
+      border-radius: 8px;
       text-decoration: none;
+      transition: 0.3s;
     }
 
     .cta a:hover {
-      text-decoration: underline;
+      background-color: #00ffe7;
+      color: #000;
+      box-shadow: 0 0 15px #00ffe7;
     }
 
-    .video-section ul {
-      list-style: none;
-      padding-left: 0;
-      margin-top: 15px;
+    .video-section .note {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-top: -10px;
+      margin-bottom: 20px;
     }
 
-    .video-section li {
-      margin-bottom: 12px;
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
     }
 
-    .video-section a {
+    .video-card {
+      background-color: #1e1e2f;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      text-align: center;
+    }
+
+    .video-card a {
       color: #ffa500;
-      text-decoration: none;
       font-weight: bold;
+      text-decoration: none;
     }
 
-    .video-section a:hover {
+    .video-card a:hover {
       text-decoration: underline;
+    }
+
+    .upload-section {
+      margin-top: 40px;
+      background-color: #111728;
+      padding: 25px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .upload-section input[type="file"] {
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      background-color: #282c34;
+      color: #fff;
+      border: none;
     }
 
     footer {
@@ -126,13 +206,17 @@
     }
 
     @media (max-width: 768px) {
-      .images {
-        flex-direction: column;
-        align-items: center;
+      .project-link {
+        font-size: 1.3rem;
       }
 
-      .project-link {
-        font-size: 1.4rem;
+      .linkedin-link {
+        position: static;
+        margin-top: 10px;
+      }
+
+      header {
+        padding-top: 80px;
       }
     }
   </style>
@@ -140,12 +224,15 @@
 <body>
 
   <header>
+    <div class="linkedin-link">
+      <a href="https://www.linkedin.com/in/alanlenhart" target="_blank">👤 Connect on LinkedIn</a>
+    </div>
     <h1>Fortnite Footwear Finder</h1>
     <p>Fortnite is one of the world’s most popular online games, boasting millions of players and a massive cultural footprint. Known for its vibrant skins and iconic crossovers, it’s more than a game—it’s a global phenomenon.</p>
   </header>
 
   <div class="project-link">
-    Project: <a href="https://al-lenhart.github.io/fortnitefootwear/test4.html" target="_blank">https://al-lenhart.github.io/fortnitefootwear/test4.html</a>
+    <a href="https://al-lenhart.github.io/fortnitefootwear/test4.html" target="_blank">🔗 Direct Link to Roboflow Project</a>
   </div>
 
   <section>
@@ -155,6 +242,7 @@
     <ul>
       <li><strong>“Jordan 11 University Blue”</strong> in-game = <strong>Jordan 11 Retro Pantone</strong> IRL</li>
       <li><strong>“Jordan 11 Black/Gym Red”</strong> in-game = <strong>Jordan 11 Playoffs Bred</strong> IRL</li>
+      <li><strong>“Nike Cortez Leather OG”</strong> in-game = <strong>Nike Cortez Basic Leather Forrest Gump</strong> IRL</li>
     </ul>
     <p>This project uses Roboflow’s computer vision to help you identify Fortnite footwear and find them online easily.</p>
   </section>
@@ -178,22 +266,39 @@
 
   <section class="video-section">
     <h2>🎬 YouTube Test Clips</h2>
-    <ul>
-      <li><a href="https://www.youtube.com/watch?v=aR_1qD1x1vE&t" target="_blank">Test the "Nike Air Foamposite One Galaxy"</a></li>
-      <li><a href="https://www.youtube.com/watch?v=lpIyyPL6elo&t&ab" target="_blank">Test the "Jordan Retro 4 Manila"</a></li>
-      <li><a href="https://www.youtube.com/watch?v=2OXi5NzJuI4&ab_channel=blxrry" target="_blank">Test the "Nike Air Pegasus 41 Hot Punch"</a></li>
-      <li><a href="https://www.youtube.com/watch?v=WlPWQRbiGFk&ab_channel=blxrry" target="_blank">Test the "Nike Cortez Forrest Gump"</a></li>
-      <li><a href="https://www.youtube.com/watch?v=cuSNPvUSacM&t" target="_blank">Test the "Jordan 3 Retro Palomino"</a></li>
-    </ul>
+    <p class="note">(*Also a good place to take screenshots to test on the actual project page.)</p>
+    <div class="video-grid">
+      <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=aR_1qD1x1vE&t" target="_blank">Test the "Nike Air Foamposite One Galaxy"</a>
+      </div>
+      <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=lpIyyPL6elo&t&ab" target="_blank">Test the "Jordan Retro 4 Manila"</a>
+      </div>
+      <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=2OXi5NzJuI4&ab_channel=blxrry" target="_blank">Test the "Nike Air Pegasus 41 Hot Punch"</a>
+      </div>
+      <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=WlPWQRbiGFk&ab_channel=blxrry" target="_blank">Test the "Nike Cortez Forrest Gump"</a>
+      </div>
+      <div class="video-card">
+        <a href="https://www.youtube.com/watch?v=cuSNPvUSacM&t" target="_blank">Test the "Jordan 3 Retro Palomino"</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="upload-section">
+    <h2>🖼️ Upload Your Own Fortnite Screenshot</h2>
+    <p>Want to test with your own images? Take a screenshot in Fortnite, then upload it here and open the model separately on your iPhone to scan the screen.</p>
+    <input type="file" accept="image/*">
   </section>
 
   <section>
-    <h2>💼 Business Opportunity: Affiliate Marketing</h2>
-    <p>This concept can evolve into a profitable affiliate marketing venture. By partnering with sneaker resale platforms like StockX, Fortnite players can be directed to buy shoes they see in-game—earning a commission per sale. With millions of Fortnite fans and a booming sneaker market, the opportunity is massive.</p>
+    <h2>💡 Business Idea</h2>
+    <p>This project could be scaled into an affiliate marketing funnel. By partnering with sneaker resellers like StockX or GOAT, Fortnite fans can directly purchase the sneakers they see in-game. Each sale can generate affiliate revenue—bridging gaming culture and commerce.</p>
   </section>
 
   <footer>
-    &copy; 2025 Fortnite Footwear Finder | Built with 💡 using Roboflow & Imagination
+    Built by Alan Lenhart • Powered by Roboflow • Fortnite is property of Epic Games
   </footer>
 
 </body>
