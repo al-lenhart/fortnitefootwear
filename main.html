@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fortnite Kicks Finder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Reset some default styles */
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #181a20;
+      color: #f5f6fa;
+      min-height: 100vh;
+    }
+
+    /* Header Menu */
+    header {
+      background: #23272f;
+      padding: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      height: 60px;
+    }
+    .site-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #ffb600;
+      text-shadow: 0 2px 8px #0004;
+    }
+    nav {
+      display: flex;
+      gap: 20px;
+    }
+    nav a {
+      color: #f5f6fa;
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: background 0.15s, color 0.15s;
+    }
+    nav a:hover, nav a:focus {
+      background: #ffb600;
+      color: #23272f;
+      outline: none;
+    }
+
+    /* Main Content */
+    main {
+      max-width: 600px;
+      margin: 40px auto 0 auto;
+      background: #23272f;
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+      padding: 36px 28px 28px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      margin: 0 0 10px 0;
+      color: #ffb600;
+      letter-spacing: 1px;
+      text-align: center;
+      text-shadow: 0 2px 8px #0004;
+    }
+    h2 {
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin: 0 0 18px 0;
+      text-align: center;
+      color: #f5f6fa;
+      opacity: 0.85;
+    }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 12px;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 1.08rem;
+      line-height: 1.5;
+      background: #23272f;
+      border-radius: 8px;
+      padding: 12px 14px;
+      box-shadow: 0 1px 4px #0002;
+    }
+    .step-number {
+      background: #ffb600;
+      color: #23272f;
+      font-weight: bold;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.05rem;
+      margin-top: 2px;
+      box-shadow: 0 2px 6px #0002;
+      flex-shrink: 0;
+    }
+    .step-desc {
+      flex: 1;
+    }
+    .step-desc .subnote {
+      font-size: 0.95em;
+      color: #ffb600;
+      opacity: 0.85;
+      margin-top: 4px;
+      display: block;
+    }
+
+    /* Buttons */
+    .actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+    .btn {
+      background: #ffb600;
+      color: #23272f;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      padding: 12px 22px;
+      font-size: 1.08rem;
+      cursor: pointer;
+      box-shadow: 0 2px 8px #0003;
+      transition: background 0.18s, color 0.18s, transform 0.12s;
+    }
+    .btn:hover, .btn:focus {
+      background: #ffc94d;
+      color: #181a20;
+      transform: translateY(-2px) scale(1.03);
+      outline: none;
+    }
+
+    /* Footer */
+    footer {
+      margin: 32px 0 0 0;
+      text-align: center;
+      color: #bdbdbd;
+      font-size: 0.98rem;
+      opacity: 0.8;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 700px) {
+      .nav-container, main {
+        max-width: 98vw;
+        padding-left: 8px;
+        padding-right: 8px;
+      }
+      main {
+        padding: 22px 6px 18px 6px;
+      }
+      h1 {
+        font-size: 1.45rem;
+      }
+    }
+    @media (max-width: 480px) {
+      .nav-container {
+        flex-direction: column;
+        align-items: flex-start;
+        height: auto;
+        gap: 8px;
+        padding: 10px 6px;
+      }
+      nav {
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="nav-container">
+      <span class="site-title">Fortnite Kicks Finder</span>
+      <nav>
+        <a href="#">Home</a>
+        <a href="http://al-lenhart.github.io/fortnitefootwear/about.html" target="_blank" rel="noopener">About</a>
+        <a href="https://www.linkedin.com/in/alanlenhart/" target="_blank" rel="noopener">Connect</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <h1>Fortnite Kicks Finder</h1>
+    <h2>From the Battle Bus to Your Doorstep</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <div class="step-desc">
+          Use your phone to take a picture of your Fortnite character wearing your favorite kicks from the Fortnite shop.
+          <span class="subnote">
+            ** For best results, take a picture with your character facing forward in the Loadout Locker.
+          </span>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <div class="step-desc">
+          Upload your picture using the <strong>"Upload Fortnite Character Here"</strong> button below.
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <div class="step-desc">
+          Buy your favorite shoe, straight out of the game and on to your feet!
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="btn">Upload Fortnite Character Here</button>
+      <button class="btn">Find on StockX</button>
+    </div>
+
+    <footer>
+      Not affiliated with Epic Games or StockX
+    </footer>
+  </main>
+</body>
+</html>
