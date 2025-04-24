@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loot Kicks Finder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            /* Modern clean colors with Fortnite touches */
+            --primary: #5454ED;           /* Fortnite blue-purple */
+            --secondary: #00B5FF;         /* Fortnite bright blue */
+            --accent: #FFDE2F;            /* Fortnite yellow */
+            --accent-2: #19E68C;          /* Fortnite teal/green */
+            --dark: #1E1E2F;              /* Dark blue-gray */
+            --light: #ffffff;
+            --grey-100: #f8f9fa;
+            --grey-200: #e9ecef;
+            --grey-300: #dee2e6;
+            --shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--grey-100);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Clean, modern header - light background */
+        header {
+            background-color: var(--light);
+            padding: 20px 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 75px; /* Increased logo size significantly */
+            margin-right: 16px;
+        }
+
+        .logo-text {
+            font-weight: 800;
+            font-size: 1.75rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Hero Section with Fortnite elements */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 60px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fortnite-style hexagon pattern overlay */
+        .hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 17.32v34.64L30 60 0 51.96V17.32L30 0zm-6 25.98v8.04L36 30l-12-4.02z' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            letter-spacing: -1px;
+            color: var(--light);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .hero p {
+            font-size: 1.15rem;
+            max-width: 800px;
+            margin: 0 auto 15px;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .hero .sneakerhead-text {
+            font-size: 1.25rem;
+            margin-bottom: 20px;
+            line-height: 1.7;
+        }
+
+        .hero strong {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 60px 0;
+            position: relative;
+        }
+
+        /* Fortnite-style llama silhouette background */
+        .main::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 300px;
+            height: 300px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Cpath d='M440.9 136.3c-14.7-14.7-35.3-23.9-57.9-23.9-9.7 0-19.1 1.7-28 4.8-9.7-34.6-38.9-60.7-74.5-60.7-27.3 0-51.7 14.3-65.5 36.3-4.7-1.5-9.7-2.4-14.9-2.4-28.6 0-51.7 23.1-51.7 51.7 0 7.1 1.5 14 4.1 20.3-28.7 13.6-48.3 42.9-48.3 76.7 0 46.9 38 84.9 84.9 84.9h206.7c46.9 0 84.9-38 84.9-84.9 0-31.9-17.9-59.7-44-74.3 3.1-8.4 4.8-17.5 4.8-27.1 0-22.6-9.2-43.1-23.9-57.9z' fill='%23e9ecef'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: bottom right;
+            z-index: -1;
+            opacity: 0.3;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 35px;
+            margin-bottom: 30px;
+            position: relative;
+            border: none;
+            overflow: hidden;
+        }
+
+        /* Fortnite-style card accent line */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+        }
+
+        .card-title {
+            font-weight: 700;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--dark);
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Fortnite-style underline for titles */
+        .card-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--accent);
+        }
+
+        /* Steps with Fortnite elements */
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(84, 84, 237, 0.25);
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex-grow: 1;
+            padding-top: 5px;
+        }
+
+        .step-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .step-desc {
+            color: #555;
+            font-size: 1rem;
+        }
+
+        /* Image Upload with Fortnite styling */
+        .upload-section {
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(84, 84, 237, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fortnite-style button hover effect */
+        .upload-btn::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            z-index: -1;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            border-radius: 16px;
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(84, 84, 237, 0.4);
+        }
+
+        .upload-btn:hover::before {
+            opacity: 0.15;
+            transform: scale(1);
+        }
+
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .status-container {
+            margin-top: 20px;
+        }
+
+        #status {
+            font-size: 1rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .loader {
+            border: 3px solid var(--grey-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #image-preview {
+            max-width: 280px;
+            max-height: 280px;
+            border-radius: 12px;
+            margin: 25px auto;
+            display: none;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--accent);
+        }
+
+        /* Search with Fortnite elements */
+        .search-section {
+            display: flex;
+            gap: 15px;
+            margin-top: 35px;
+        }
+
+        #shoe-input {
+            flex-grow: 1;
+            padding: 16px 20px;
+            border: 2px solid var(--grey-200);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        #shoe-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(84, 84, 237, 0.15);
+        }
+
+        #search-button {
+            background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent) 100%);
+            color: var(--dark);
+            border: none;
+            padding: 0 32px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(25, 230, 140, 0.25);
+        }
+
+        #search-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 16px rgba(25, 230, 140, 0.35);
+        }
+
+        #search-button:active {
+            transform: translateY(0);
+        }
+
+        /* Modal with Fortnite styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.7);
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
+        }
+
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 35px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Fortnite-style modal accent */
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 100%);
+        }
+
+        .modal h3 {
+            margin-bottom: 25px;
+            color: var(--dark);
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .modal-option {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 8px;
+            color: white;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        #take-photo-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            box-shadow: 0 4px 12px rgba(84, 84, 237, 0.25);
+        }
+
+        #take-photo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(84, 84, 237, 0.35);
+        }
+
+        #upload-photo-btn {
+            background: linear-gradient(135deg, var(--dark) 0%, #3a3465 100%);
+            box-shadow: 0 4px 12px rgba(30, 30, 47, 0.25);
+        }
+
+        #upload-photo-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(30, 30, 47, 0.35);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: var(--grey-300);
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            z-index: 2;
+        }
+
+        .close-modal:hover {
+            color: var(--dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: var(--grey-300);
+            font-size: 0.9rem;
+            padding: 25px 0;
+            background: var(--dark);
+            margin-top: 40px;
+        }
+
+        /* Glow effect with Fortnite colors */
+        .glow-text {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                color: var(--primary);
+                text-shadow: 0 0 5px rgba(84, 84, 237, 0.3);
+            }
+            to {
+                color: var(--secondary);
+                text-shadow: 0 0 10px rgba(0, 181, 255, 0.5);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero .sneakerhead-text {
+                font-size: 1.1rem;
+            }
+
+            .search-section {
+                flex-direction: column;
+            }
+
+            #search-button {
+                width: 100%;
+                padding: 16px;
+            }
+            
+            .logo {
+                height: 65px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero .sneakerhead-text {
+                font-size: 1rem;
+            }
+
+            .card {
+                padding: 25px;
+            }
+            
+            .logo {
+                height: 55px;
+            }
+            
+            .logo-text {
+                font-size: 1.4rem;
+            }
+
+            .step-number {
+                width: 40px;
+                height: 40px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="https://al-lenhart.github.io/fortnitefootwear/lootkickslogo.png" alt="Loot Kicks Finder Logo" class="logo">
+                    <span class="logo-text">Loot Kicks Finder</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Find Your Fortnite Kicks In Real Life</h1>
+                <p>Because unless you're a true sneakerhead, you probably don't know that the Jordan 13 Black Toe is actually the Jordan 13 Retro 'He Got Game', the Jordan 11 University Blue is the Jordan 11 Retro 'Pantone', and the Jordan 5 Apple Green is officially called the Jordan 5 SE 'Oregon'.</p>
+                <p class="sneakerhead-text"><strong>We've got you covered!</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <main class="main">
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Capture</div>
+                            <div class="step-desc">Take a screenshot or photo of your character wearing the shoes (use the "Locker Loadout" screen for best results).</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Upload</div>
+                            <div class="step-desc">Tap the "Upload Image" button below to submit your screenshot or take a new photo.</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Auto-Detect</div>
+                            <div class="step-desc">Our system will identify the shoes and populate the search field automatically.</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Purchase</div>
+                            <div class="step-desc">Click "Find On StockX" to see real-world versions of your virtual kicks!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="upload-section">
+                    <button id="upload-button" class="upload-btn" onclick="openImageOptionsModal()">Upload Image</button>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+                    
+                    <div class="status-container">
+                        <div class="loader" id="loader"></div>
+                        <div id="status"></div>
+                    </div>
+                    
+                    <img id="image-preview" src="" alt="Image Preview">
+                    
+                    <div class="search-section">
+                        <input type="text" id="shoe-input" placeholder="Your shoe will appear here..." autofocus>
+                        <button id="search-button" onclick="searchStockX()">Find on StockX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Not affiliated with Epic Games or StockX</p>
+        </div>
+    </footer>
+
+    <div id="image-options-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeImageOptionsModal()">&times;</span>
+            <h3>Choose an Option</h3>
+            <button id="take-photo-btn" class="button modal-option" onclick="takeMobilePhoto()">Take Photo</button>
+            <button id="upload-photo-btn" class="button modal-option" onclick="document.getElementById('file-input').click(); closeImageOptionsModal();">Upload Photo</button>
+        </div>
+    </div>
+
+    <script>
+        // Detect if the user is on a mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Modal functions
+        function openImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'block';
+        }
+
+        function closeImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('image-options-modal');
+            if (event.target == modal) {
+                closeImageOptionsModal();
+            }
+        }
+
+        // Simplified approach: Use native file input with capture attribute for mobile
+        function takeMobilePhoto() {
+            closeImageOptionsModal();
+            
+            // Create a temporary file input with capture attribute
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.accept = 'image/*';
+            
+            // If on mobile, use the camera directly
+            if (isMobileDevice()) {
+                tempInput.setAttribute('capture', 'environment'); // Use rear camera by default
+            }
+            
+            // Add event listener to handle the photo
+            tempInput.addEventListener('change', function(event) {
+                handleImageUpload(event);
+                // Remove the temp input after use
+                document.body.removeChild(tempInput);
+            });
+            
+            // Append to body (invisible) and trigger click
+            tempInput.style.display = 'none';
+            document.body.appendChild(tempInput);
+            tempInput.click();
+        }
+
+        // Function to handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            processImageFile(file);
+        }
+
+        // Function to process an image file
+        function processImageFile(file) {
+            const reader = new FileReader();
+            const preview = document.getElementById('image-preview');
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            // Show preview of the image
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+
+            // Show loading indicator
+            status.textContent = "Analyzing image...";
+            loader.style.display = 'block';
+
+            // Use the direct Roboflow Hosted Inference API URL
+            const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/6?api_key=bqnYRrt4tXDQQ6SftsLE';
+
+            // Prepare form data for multipart/form-data submission
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch(apiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server responded with ${response.status}: ${text}`);
+                    });
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading indicator
+                loader.style.display = 'none';
+
+                // Check if predictions are available
+                if (data.predictions && data.predictions.length > 0) {
+                    // Sort predictions by confidence (highest first)
+                    const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                    // Get the class with highest confidence
+                    const topPrediction = sortedPredictions[0];
+                    const shoeClass = topPrediction.class;
+
+                    // Update the input field with the detected shoe class
+                    document.getElementById('shoe-input').value = shoeClass;
+
+                    status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                    status.className = 'glow-text';
+                } else {
+                    status.textContent = "No shoes detected in the image.";
+                    status.className = '';
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                status.textContent = "Error analyzing image. Please try again.";
+                status.className = '';
+
+                // Try alternative API approach (base64)
+                try64BitApproach(file);
+            });
+        }
+
+        // Try the base64 approach
+        function try64BitApproach(file) {
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            status.textContent = "Trying alternative method...";
+            loader.style.display = 'block';
+
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const base64 = fileReader.result.split(',')[1]; // Remove data:image/jpeg;base64,
+
+                // Prepare the request
+                const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/6';
+                const requestData = {
+                    api_key: "bqnYRrt4tXDQQ6SftsLE",
+                    image: base64
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Server responded with ${response.status}: ${text}`);
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loader.style.display = 'none';
+
+                    // Check if predictions are available
+                    if (data.predictions && data.predictions.length > 0) {
+                        // Sort predictions by confidence (highest first)
+                        const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                        // Get the class with highest confidence
+                        const topPrediction = sortedPredictions[0];
+                        const shoeClass = topPrediction.class;
+
+                        // Update the input field with the detected shoe class
+                        document.getElementById('shoe-input').value = shoeClass;
+
+                        status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                        status.className = 'glow-text';
+                    } else {
+                        status.textContent = "No shoes detected in the image.";
+                        status.className = '';
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    status.textContent = "Error analyzing image. Please try again.";
+                    status.className = '';
+                });
+            };
+
+            fileReader.readAsDataURL(file);
+        }
+
+        // Function to search StockX
+        function searchStockX() {
+            const shoeInput = document.getElementById('shoe-input').value.trim();
+
+            if (shoeInput) {
+                // Format the search query for a URL
+                const searchQuery = encodeURIComponent(shoeInput);
+
+                // Create the StockX search URL
+                const stockXSearchUrl = `https://stockx.com/search?s=${searchQuery}`;
+
+                // Open in new tab to avoid cross-origin issues
+                window.open(stockXSearchUrl, '_blank');
+            }
+        }
+
+        // Allow the Enter key to trigger the search
+        document.getElementById('shoe-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchStockX();
+            }
+        });
+    </script>
