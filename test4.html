@@ -186,29 +186,6 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        #debug-info {
-            margin-top: 20px;
-            text-align: left;
-            font-size: 12px;
-            background-color: rgba(0, 0, 0, 0.7);
-            padding: 15px;
-            border-radius: 8px;
-            border: 1px solid #444;
-            max-height: 200px;
-            overflow-y: auto;
-            display: none;
-            color: #ddd;
-        }
-
-        .debug-toggle {
-            font-size: 12px;
-            color: var(--fortnite-blue);
-            cursor: pointer;
-            margin-top: 20px;
-            text-decoration: underline;
-            opacity: 0.7;
-        }
-
         .glow-text {
             animation: glow 2s ease-in-out infinite alternate;
         }
@@ -293,15 +270,19 @@
         <div class="instructions">
             <div class="step">
                 <div class="step-number">1</div>
-                <div class="step-text">Take a screenshot or use your phone to take a photo of the character wearing the shoes. <strong>For best results, use a photo from the "Locker Loadout" screen.</strong></div>
+                <div class="step-text"><strong>Step 1. Capture: </strong>Take a screenshot or photo of your character wearing the shoes (use the "Locker Loadout" screen for best results).</div>
             </div>
             <div class="step">
                 <div class="step-number">2</div>
-                <div class="step-text">Upload your picture or take a new photo using the "Upload Fortnite Character Here" button below.</div>
+                <div class="step-text"><strong>Step 2. Upload: </strong>Use the "Upload Fortnite Character Here" button to submit your image or take a new photo.</div>
             </div>
             <div class="step">
                 <div class="step-number">3</div>
-                <div class="step-text">Buy your favorite shoe, straight out of the game and on to your feet!</div>
+                <div class="step-text"><strong>Step 3. Auto-Detect: </strong>Our system will auto-detect the shoes and populate the search field. Click "Find On StockX" to proceed.</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-text"><strong>Step 4. Purchase: </strong>Buy your favorite in-game shoes and wear them in real life!</div>
             </div>
         </div>
 
@@ -321,9 +302,6 @@
         <div class="footer">
             <p>Not affiliated with Epic Games or StockX</p>
         </div>
-
-        <div class="debug-toggle" onclick="toggleDebug()">Show Debug Info</div>
-        <div id="debug-info"></div>
     </div>
 
     <div id="image-options-modal" class="modal">
@@ -336,37 +314,6 @@
     </div>
 
     <script>
-        // Debug function
-        function log(message, data) {
-            const debugInfo = document.getElementById('debug-info');
-            const timestamp = new Date().toLocaleTimeString();
-
-            let logMessage = `${timestamp}: ${message}`;
-            if (data) {
-                try {
-                    logMessage += ' - ' + JSON.stringify(data).substring(0, 500);
-                    if (JSON.stringify(data).length > 500) logMessage += '...';
-                } catch (e) {
-                    logMessage += ' - [Complex data]';
-                }
-            }
-
-            debugInfo.innerHTML += logMessage + '<br>';
-            debugInfo.scrollTop = debugInfo.scrollHeight;
-            console.log(message, data);
-        }
-
-        function toggleDebug() {
-            const debugInfo = document.getElementById('debug-info');
-            if (debugInfo.style.display === 'block') {
-                debugInfo.style.display = 'none';
-                document.querySelector('.debug-toggle').textContent = 'Show Debug Info';
-            } else {
-                debugInfo.style.display = 'block';
-                document.querySelector('.debug-toggle').textContent = 'Hide Debug Info';
-            }
-        }
-
         // Detect if the user is on a mobile device
         function isMobileDevice() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -375,12 +322,10 @@
         // Modal functions
         function openImageOptionsModal() {
             document.getElementById('image-options-modal').style.display = 'block';
-            log('Image options modal opened');
         }
 
         function closeImageOptionsModal() {
             document.getElementById('image-options-modal').style.display = 'none';
-            log('Image options modal closed');
         }
 
         // Close modal when clicking outside of it
@@ -394,7 +339,6 @@
         // Simplified approach: Use native file input with capture attribute for mobile
         function takeMobilePhoto() {
             closeImageOptionsModal();
-            log('Taking photo using native camera');
             
             // Create a temporary file input with capture attribute
             const tempInput = document.createElement('input');
@@ -424,7 +368,6 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            log('File selected', { name: file.name, type: file.type, size: file.size + ' bytes' });
             processImageFile(file);
         }
 
@@ -439,7 +382,6 @@
             reader.onload = function(e) {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
-                log('Image preview loaded');
             };
 
             reader.readAsDataURL(file);
@@ -450,24 +392,18 @@
 
             // Use the direct Roboflow Hosted Inference API URL
             const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5?api_key=bqnYRrt4tXDQQ6SftsLE';
-            log('Using API URL', apiUrl);
 
             // Prepare form data for multipart/form-data submission
             const formData = new FormData();
             formData.append('file', file);
-
-            log('Sending API request');
 
             fetch(apiUrl, {
                 method: 'POST',
                 body: formData
             })
             .then(response => {
-                log('API Response Status', { status: response.status, statusText: response.statusText });
-
                 if (!response.ok) {
                     return response.text().then(text => {
-                        log('Error Response Body', text);
                         throw new Error(`Server responded with ${response.status}: ${text}`);
                     });
                 }
@@ -475,8 +411,6 @@
                 return response.json();
             })
             .then(data => {
-                log('API Response Data', data);
-
                 // Hide loading indicator
                 loader.style.display = 'none';
 
@@ -484,7 +418,6 @@
                 if (data.predictions && data.predictions.length > 0) {
                     // Sort predictions by confidence (highest first)
                     const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
-                    log('Sorted predictions', sortedPredictions);
 
                     // Get the class with highest confidence
                     const topPrediction = sortedPredictions[0];
@@ -496,15 +429,13 @@
                     status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
                     status.className = 'glow-text';
                 } else {
-                    log('No predictions found in response');
                     status.textContent = "No shoes detected in the image.";
                     status.className = '';
                 }
             })
             .catch(error => {
-                log('API Request Error', { message: error.message });
                 loader.style.display = 'none';
-                status.textContent = "Error analyzing image. Check debug info for details.";
+                status.textContent = "Error analyzing image. Please try again.";
                 status.className = '';
 
                 // Try alternative API approach (base64)
@@ -514,7 +445,6 @@
 
         // Try the base64 approach
         function try64BitApproach(file) {
-            log('Trying base64 encoding approach');
             const status = document.getElementById('status');
             const loader = document.getElementById('loader');
 
@@ -524,7 +454,6 @@
             const fileReader = new FileReader();
             fileReader.onload = function() {
                 const base64 = fileReader.result.split(',')[1]; // Remove data:image/jpeg;base64,
-                log('Image converted to base64', { length: base64.length + ' characters' });
 
                 // Prepare the request
                 const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5';
@@ -532,8 +461,6 @@
                     api_key: "bqnYRrt4tXDQQ6SftsLE",
                     image: base64
                 };
-
-                log('Sending base64 API request');
 
                 fetch(apiUrl, {
                     method: 'POST',
@@ -543,11 +470,8 @@
                     body: JSON.stringify(requestData)
                 })
                 .then(response => {
-                    log('Base64 API Response Status', { status: response.status, statusText: response.statusText });
-
                     if (!response.ok) {
                         return response.text().then(text => {
-                            log('Base64 Error Response Body', text);
                             throw new Error(`Server responded with ${response.status}: ${text}`);
                         });
                     }
@@ -555,8 +479,6 @@
                     return response.json();
                 })
                 .then(data => {
-                    log('Base64 API Response Data', data);
-
                     // Hide loading indicator
                     loader.style.display = 'none';
 
@@ -580,13 +502,9 @@
                     }
                 })
                 .catch(error => {
-                    log('Base64 API Request Error', { message: error.message });
                     loader.style.display = 'none';
-                    status.textContent = "Error analyzing image. Check debug info for details.";
+                    status.textContent = "Error analyzing image. Please try again.";
                     status.className = '';
-
-                    // Display API connection instructions
-                    log('CORS issues may be preventing API access. Try hosting this file on a server or using a CORS proxy.');
                 });
             };
 
@@ -598,7 +516,6 @@
             const shoeInput = document.getElementById('shoe-input').value.trim();
 
             if (shoeInput) {
-                log('Searching StockX for', { query: shoeInput });
                 // Format the search query for a URL
                 const searchQuery = encodeURIComponent(shoeInput);
 
@@ -616,8 +533,6 @@
                 searchStockX();
             }
         });
-
-        log('Application initialized');
     </script>
 </body>
 </html>
