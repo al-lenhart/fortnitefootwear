@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DebateHub - Modern Topic Discussions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --primary-dark: #345888;
+            --secondary: #6c757d;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --danger: #dc3545;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            height: 100vh;
+            gap: 1rem;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo i {
+            font-size: 1.5rem;
+        }
+
+        .topic-container {
+            background-color: var(--primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .topic-header {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 0.3rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .current-topic {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .timer {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .online-count {
+            background-color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .online-dot {
+            width: 10px;
+            height: 10px;
+            background-color: var(--success);
+            border-radius: 50%;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            gap: 1rem;
+            height: 100%;
+        }
+
+        .users-panel {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .users-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .users-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .users-count {
+            background-color: var(--primary);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .users-list {
+            list-style: none;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.3rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .user-item:hover {
+            background-color: #f0f2f5;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 0.8rem;
+        }
+
+        .user-name {
+            flex-grow: 1;
+        }
+
+        .user-actions {
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .user-item:hover .user-actions {
+            opacity: 1;
+        }
+
+        .vote-kick {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--danger);
+            transition: transform 0.2s;
+        }
+
+        .vote-kick:hover {
+            transform: scale(1.2);
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 0.8rem;
+            max-width: 80%;
+        }
+
+        .message.own-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .own-message .message-avatar {
+            background-color: var(--primary);
+        }
+
+        .message-content {
+            background-color: #f0f2f5;
+            padding: 0.8rem;
+            border-radius: 12px;
+            border-top-left-radius: 0;
+            position: relative;
+        }
+
+        .own-message .message-content {
+            background-color: #e3f2fd;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 0;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .message-text {
+            font-size: 0.95rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: var(--secondary);
+            align-self: flex-end;
+            margin-top: 0.3rem;
+        }
+
+        .chat-input {
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-form input {
+            flex-grow: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .chat-form input:focus {
+            border-color: var(--primary);
+        }
+
+        .send-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 24px;
+            padding: 0.5rem 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .send-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .welcome-card {
+            background-color: white;
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: var(--secondary);
+            margin-bottom: 2rem;
+        }
+
+        .username-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .username-input {
+            padding: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .username-input:focus {
+            border-color: var(--primary);
+        }
+
+        .join-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .join-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .rules-text {
+            margin-top: 1.5rem;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .system-message {
+            align-self: center;
+            background-color: #fff8e1;
+            padding: 0.5rem 1rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: #ff8f00;
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+
+            .users-panel {
+                display: none;
+            }
+
+            .message {
+                max-width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-comments"></i>
+                <span>DebateHub</span>
+            </div>
+            <div class="topic-container">
+                <div class="topic-header">CURRENT DEBATE TOPIC</div>
+                <div class="current-topic">Is social media good for society?</div>
+                <div class="timer">Next topic in: <span id="countdown">19:59</span></div>
+            </div>
+            <div class="online-count">
+                <span class="online-dot"></span>
+                <span id="user-count">0</span>/500 users online
+            </div>
+        </header>
+
+        <main>
+            <div class="users-panel">
+                <div class="users-header">
+                    <div class="users-title">Active Users</div>
+                    <div class="users-count" id="users-count-small">0</div>
+                </div>
+                <ul class="users-list" id="users-list">
+                    <!-- Users will be added dynamically -->
+                </ul>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="system-message">
+                        Welcome to the debate! Current topic: "Is social media good for society?"
+                    </div>
+                    <!-- Messages will be added dynamically -->
+                </div>
+                <div class="chat-input">
+                    <form class="chat-form" id="chat-form">
+                        <input type="text" id="message-input" placeholder="Share your thoughts..." required>
+                        <button type="submit" class="send-btn">
+                            <span>Send</span>
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="welcome-screen" id="welcome-screen">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Welcome to DebateHub</h1>
+            <p class="welcome-subtitle">Join the discussion on trending topics that change every 20 minutes!</p>
+            <form id="username-form" class="username-form">
+                <input type="text" id="username-input" class="username-input" placeholder="Choose a username..." required minlength="3" maxlength="15">
+                <button type="submit" class="join-btn">Join the Debate</button>
+            </form>
+            <p class="rules-text">By joining, you agree to be respectful and constructive in your discussions. Users can vote to remove those who disrupt the conversation.</p>
+        </div>
+    </div>
+
+    <script>
+        // Sample debate topics
+        const debateTopics = [
+            "Is social media good for society?",
+            "Should college education be free?",
+            "Is AI development moving too fast?",
+            "Are cryptocurrencies the future of money?",
+            "Should remote work become the new normal?",
+            "Is space exploration worth the cost?",
+            "Should voting be mandatory?",
+            "Is nuclear energy the solution to climate change?",
+            "Should the internet be a public utility?",
+            "Is universal basic income a good idea?",
+            "Should billionaires exist?",
+            "Do video games cause violence?",
+            "Should homework be banned?",
+            "Is democracy the best form of government?",
+            "Does technology make us more or less connected?"
+        ];
+
+        // Simulated user data
+        const simulatedUsers = [
+            { name: "Alex123", color: "#4a6fa5" },
+            { name: "TechTalker", color: "#28a745" },
+            { name: "DebateMaster", color: "#dc3545" },
+            { name: "PhilosophyFan", color: "#17a2b8" },
+            { name: "LogicLover", color: "#6610f2" },
+            { name: "OpinionatedOne", color: "#fd7e14" },
+            { name: "ThoughtfulThinker", color: "#20c997" },
+            { name: "CriticalMind", color: "#e83e8c" }
+        ];
+
+        // Chat message templates for simulated users
+        const messageTemplates = [
+            "I think {topic} because it allows for broader access to information.",
+            "I disagree. {topic} has shown to have negative effects on mental health.",
+            "Studies show that {topic} can lead to both positive and negative outcomes.",
+            "From my perspective, {topic} is necessary for progress.",
+            "Let's consider the ethical implications of {topic} before making judgments.",
+            "Has anyone seen recent research on how {topic} affects different age groups?",
+            "I believe {topic} should be regulated more strictly.",
+            "The benefits of {topic} clearly outweigh the drawbacks.",
+            "What if we look at {topic} from a different angle?",
+            "I used to be against {topic}, but I've changed my mind after experiencing...",
+            "Can we really generalize about {topic} when there are so many variables?",
+            "The problem with {topic} is that we don't have enough long-term data.",
+            "I'm curious what others think about the economic impact of {topic}?"
+        ];
+        
+        // App state
+        let currentUser = null;
+        let activeUsers = [];
+        let topicChangeInterval;
+        let userSimulationInterval;
+        let currentTopicIndex = 0;
+        
+        // DOM elements
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const usernameForm = document.getElementById('username-form');
+        const usernameInput = document.getElementById('username-input');
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message-input');
+        const chatMessages = document.getElementById('chat-messages');
+        const countdownElement = document.getElementById('countdown');
+        const userCountElement = document.getElementById('user-count');
+        const usersCountSmall = document.getElementById('users-count-small');
+        const usersList = document.getElementById('users-list');
+        const currentTopicElement = document.querySelector('.current-topic');
+        
+        // Initialize the app
+        function init() {
+            usernameForm.addEventListener('submit', handleUsernameSubmit);
+            chatForm.addEventListener('submit', handleMessageSubmit);
+            
+            // Generate some initial simulated users
+            generateInitialUsers();
+            
+            // Start topic rotation
+            startTopicRotation();
+        }
+        
+        // Handle username submission
+        function handleUsernameSubmit(e) {
+            e.preventDefault();
+            const username = usernameInput.value.trim();
+            
+            if (username.length < 3) {
+                alert('Username must be at least 3 characters long');
+                return;
+            }
+            
+            if (activeUsers.some(user => user.name.toLowerCase() === username.toLowerCase())) {
+                alert('Username already taken. Please choose another one.');
+                return;
+            }
+            
+            // Create current user
+            currentUser = {
+                name: username,
+                color: getRandomColor(),
+                isCurrentUser: true
+            };
+            
+            // Add user to active users
+            activeUsers.push(currentUser);
+            
+            // Update UI
+            updateUsersList();
+            updateUserCount();
+            
+            // Hide welcome screen
+            welcomeScreen.style.display = 'none';
+            
+            // Add system message
+            addSystemMessage(`${username} has joined the chat`);
+            
+            // Start simulating other users' messages
+            startUserSimulation();
+            
+            // Focus on message input
+            messageInput.focus();
+        }
+        
+        // Handle message submission
+        function handleMessageSubmit(e) {
+            e.preventDefault();
+            const messageText = messageInput.value.trim();
+            
+            if (messageText === '') return;
+            
+            // Add message to chat
+            addMessage({
+                user: currentUser,
+                text: messageText,
+                time: new Date()
+            });
+            
+            // Clear input
+            messageInput.value = '';
+            messageInput.focus();
+        }
+        
+        // Add message to chat
+        function addMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${message.user.isCurrentUser ? 'own-message' : ''}`;
+            
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.style.backgroundColor = message.user.color;
+            avatar.textContent = message.user.name.charAt(0).toUpperCase();
+            
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            
+            const sender = document.createElement('div');
+            sender.className = 'message-sender';
+            sender.textContent = message.user.name;
+            
+            const text = document.createElement('div');
+            text.className = 'message-text';
+            text.textContent = message.text;
+            
+            const time = document.createElement('div');
+            time.className = 'message-time';
+            time.textContent = formatTime(message.time);
+            
+            content.appendChild(sender);
+            content.appendChild(text);
+            content.appendChild(time);
+            
+            messageElement.appendChild(avatar);
+            messageElement.appendChild(content);
+            
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to the bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Add system message
+        function addSystemMessage(text) {
+            const messageElement = document.createElement('div');
+            messageElement.className = 'system-message';
+            messageElement.textContent = text;
+            
+            chatMessages.appendChild(messageElement);
+            
+            // Scroll to the bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Generate initial users
+        function generateInitialUsers() {
+            const initialUserCount = Math.floor(Math.random() * 5) + 3; // 3-7 initial users
+            
+            for (let i = 0; i < initialUserCount; i++) {
+                const randomUserIndex = Math.floor(Math.random() * simulatedUsers.length);
+                const user = { ...simulatedUsers[randomUserIndex] };
+                
+                // Ensure unique names by adding a random number if needed
+                if (activeUsers.some(activeUser => activeUser.name === user.name)) {
+                    user.name = `${user.name}${Math.floor(Math.random() * 100)}`;
+                }
+                
+                user.color = getRandomColor();
+                activeUsers.push(user);
+            }
+            
+            updateUsersList();
+            updateUserCount();
+        }
+        
+        // Update users list
+        function updateUsersList() {
+            usersList.innerHTML = '';
+            
+            activeUsers.forEach(user => {
+                const listItem = document.createElement('li');
+                listItem.className = 'user-item';
+                
+                const avatar = document.createElement('div');
+                avatar.className = 'user-avatar';
+                avatar.style.backgroundColor = user.color;
+                avatar.textContent = user.name.charAt(0).toUpperCase();
+                
+                const name = document.createElement('div');
+                name.className = 'user-name';
+                name.textContent = user.name;
+                
+                const actions = document.createElement('div');
+                actions.className = 'user-actions';
+                
+                if (!user.isCurrentUser) {
+                    const kickButton = document.createElement('button');
+                    kickButton.className = 'vote-kick';
+                    kickButton.innerHTML = '<i class="fas fa-ban"></i>';
+                    kickButton.title = `Vote to kick ${user.name}`;
+                    kickButton.addEventListener('click', () => handleVoteKick(user));
+                    
+                    actions.appendChild(kickButton);
+                }
+                
+                listItem.appendChild(avatar);
+                listItem.appendChild(name);
+                listItem.appendChild(actions);
+                
+                usersList.appendChild(listItem);
+            });
+        }
+        
+        // Update user count
+        function updateUserCount() {
+            const count = activeUsers.length;
+            userCountElement.textContent = count;
+            usersCountSmall.textContent = count;
+        }
+        
+        // Handle vote kick
+        function handleVoteKick(user) {
+            const confirm = window.confirm(`Vote to kick ${user.name}? This will register your vote.`);
+            
+            if (confirm) {
+                // Simulate a successful vote
+                setTimeout(() => {
+                    // Find user index
+                    const userIndex = activeUsers.findIndex(u => u.name === user.name);
+                    
+                    if (userIndex !== -1) {
+                        // Remove user
+                        activeUsers.splice(userIndex, 1);
+                        
+                        // Update UI
+                        updateUsersList();
+                        updateUserCount();
+                        
+                        // Add system message
+                        addSystemMessage(`${user.name} has been removed from the chat due to community vote`);
+                    }
+                }, 1000);
+                
+                addSystemMessage(`You voted to remove ${user.name}`);
+            }
+        }
+        
+        // Start topic rotation
+        function startTopicRotation() {
+            // Set initial topic
+            currentTopicElement.textContent = debateTopics[currentTopicIndex];
+            
+            // Start countdown
+            let timeLeft = 20 * 60; // 20 minutes in seconds
+            
+            function updateCountdown() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft === 0) {
+                    // Change topic
+                    currentTopicIndex = (currentTopicIndex + 1) % debateTopics.length;
+                    currentTopicElement.textContent = debateTopics[currentTopicIndex];
+                    
+                    // Reset timer
+                    timeLeft = 20 * 60;
+                    
+                    // Add system message
+                    addSystemMessage(`Topic changed to: "${debateTopics[currentTopicIndex]}"`);
+                } else {
+                    timeLeft--;
+                }
+            }
+            
+            // Update initial countdown
+            updateCountdown();
+            
+            // Set interval for countdown
+            const countdownInterval = setInterval(updateCountdown, 1000);
+        }
+        
+        // Start user simulation
+        function startUserSimulation() {
+            // Simulate users joining/leaving and sending messages
+            userSimulationInterval = setInterval(() => {
+                // Randomly decide what to simulate
+                const action = Math.random();
+                
+                if (action < 0.7 && activeUsers.length > 1) {
+                    // Simulate message (70% chance)
+                    simulateMessage();
+                } else if (action < 0.85 && activeUsers.length < 15) {
+                    // Simulate user join (15% chance)
+                    simulateUserJoin();
+                } else if (activeUsers.length > 5) {
+                    // Simulate user leave (15% chance)
+                    simulateUserLeave();
+                }
+            }, 5000); // Every 5 seconds
+        }
+        
+        // Simulate message
+        function simulateMessage() {
+            // Get random user (excluding current user)
+            const otherUsers = activeUsers.filter(user => !user.isCurrentUser);
+            if (otherUsers.length === 0) return;
+            
+            const randomUserIndex = Math.floor(Math.random() * otherUsers.length);
+            const user = otherUsers[randomUserIndex];
+            
+            // Get random message template
+            const randomTemplateIndex = Math.floor(Math.random() * messageTemplates.length);
+            let messageText = messageTemplates[randomTemplateIndex];
+            
+            // Replace {topic} placeholder with current topic words
+            const currentTopic = debateTopics[currentTopicIndex].toLowerCase();
+            messageText = messageText.replace('{topic}', currentTopic);
+            
+            // Add message to chat
+            addMessage({
+                user,
+                text: messageText,
+                time: new Date()
+            });
+        }
+        
+        // Simulate user join
+        function simulateUserJoin() {
+            // Find a user not already in the active users
+            const availableUsers = simulatedUsers.filter(
+                simUser => !activeUsers.some(activeUser => activeUser.name === simUser.name)
+            );
+            
+            if (availableUsers.length === 0) return;
+            
+            const randomUserIndex = Math.floor(Math.random() * availableUsers.length);
+            const user = { ...availableUsers[randomUserIndex] };
+            user.color = getRandomColor();
+            
+            // Add user to active users
+            activeUsers.push(user);
+            
+            // Update UI
+            updateUsersList();
+            updateUserCount();
+            
+            // Add system message
+            addSystemMessage(`${user.name} has joined the chat`);
+        }
+        
+        // Simulate user leave
+        function simulateUserLeave() {
+            // Get random user (excluding current user)
+            const otherUsers = activeUsers.filter(user => !user.isCurrentUser);
+            if (otherUsers.length === 0) return;
+            
+            const randomUserIndex = Math.floor(Math.random() * otherUsers.length);
+            const user = otherUsers[randomUserIndex];
+            
+            // Find user index in active users
+            const userIndex = activeUsers.findIndex(u => u.name === user.name);
+            
+            if (userIndex !== -1) {
+                // Remove user
+                activeUsers.splice(userIndex, 1);
+                
+                // Update UI
+                updateUsersList();
+                updateUserCount();
+                
+                // Add system message
+                addSystemMessage(`${user.name} has left the chat`);
+            }
+        }
+        
+        // Helper functions
+        function formatTime(date) {
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function getRandomColor() {
+            const colors = [
+                '#4a6fa5', '#28a745', '#dc3545', '#17a2b8',
+                '#6610f2', '#fd7e14', '#20c997', '#e83e8c'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+        
+        // Initialize the app when the DOM is loaded
+        document.addEventListener('DOMContentLoaded', init);
+
+        // For demo purposes, speed up the timer (every 3 seconds = 1 minute)
+        // In a real implementation, you would remove this and use actual minutes
+        setInterval(() => {
+            const [mins, secs] = countdownElement.textContent.split(':');
+            let minutes = parseInt(mins);
+            let seconds = parseInt(secs);
+            
+            if (seconds > 0) {
+                seconds--;
+            } else if (minutes > 0) {
+                minutes--;
+                seconds = 59;
+            } else {
+                // Timer should have reset already in the updateCountdown function
+                return;
+            }
+            
+            countdownElement.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+        }, 1000);
+    </script>
+</body>
+</html>
