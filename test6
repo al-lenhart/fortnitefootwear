@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fortnite Kicks Finder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Burbank+Big+Condensed&family=Poppins:wght@400;500;600;700&display=swap');
+
+        :root {
+            --fortnite-blue: #1fa2ff;
+            --fortnite-purple: #9352b3;
+            --fortnite-yellow: #ffdd00;
+            --fortnite-teal: #00b8d9;
+            --fortnite-dark: #061f3a;
+            --card-bg: rgba(13, 45, 80, 0.85);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://cdnjs.cloudflare.com/ajax/libs/ionicons/4.5.6/collection/build/ionicons/svg/ios-cloud.svg'), linear-gradient(135deg, #061f3a 0%, #0d2d50 100%);
+            background-attachment: fixed;
+            color: white;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .app-header {
+            background: linear-gradient(90deg, var(--fortnite-dark) 0%, #0a3157 100%);
+            padding: 15px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 10;
+            border-bottom: 2px solid var(--fortnite-blue);
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: 'Burbank Big Condensed', 'Poppins', sans-serif;
+            color: var(--fortnite-yellow);
+            font-weight: 700;
+            font-size: 2.2rem;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3), 0 0 10px rgba(31, 162, 255, 0.5);
+        }
+
+        .tagline {
+            color: var(--fortnite-teal);
+            font-size: 0.95rem;
+            margin-top: 2px;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0.9;
+        }
+
+        .app-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='rgba(255,255,255,0.03)' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+
+        .how-it-works {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(31, 162, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .how-it-works::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--fortnite-blue), var(--fortnite-purple), var(--fortnite-teal));
+            border-radius: 4px 4px 0 0;
+        }
+
+        .section-title {
+            font-family: 'Burbank Big Condensed', 'Poppins', sans-serif;
+            color: white;
+            font-size: 1.4rem;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            background: var(--fortnite-yellow);
+            margin-right: 8px;
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+        }
+
+        .steps-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .step-card {
+            background: rgba(13, 45, 80, 0.5);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            border: 1px solid rgba(31, 162, 255, 0.2);
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .step-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border-color: rgba(31, 162, 255, 0.4);
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-right: 12px;
+            flex-shrink: 0;
+            box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: var(--fortnite-yellow);
+            margin-bottom: 2px;
+            font-size: 0.95rem;
+        }
+
+        .step-description {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .upload-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1px solid rgba(31, 162, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .upload-button-area {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .button {
+            padding: 14px 20px;
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            text-transform: uppercase;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            letter-spacing: 0.5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .button::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(255,255,255,0.1), rgba(255,255,255,0));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .button:hover::after {
+            opacity: 1;
+        }
+
+        .button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #upload-button {
+            background: linear-gradient(45deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+            width: 100%;
+            max-width: 280px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        #image-preview {
+            max-width: 220px;
+            max-height: 220px;
+            margin: 15px auto;
+            display: none;
+            border: 2px solid var(--fortnite-teal);
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .status-area {
+            margin-top: 10px;
+            min-height: 24px;
+        }
+
+        #status {
+            color: var(--fortnite-teal);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .search-section {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(31, 162, 255, 0.3);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        #shoe-input {
+            padding: 16px;
+            font-size: 15px;
+            border: none;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+            color: #252525;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+        }
+
+        #shoe-input::placeholder {
+            color: #757575;
+        }
+
+        #search-button {
+            background: linear-gradient(45deg, var(--fortnite-teal) 0%, var(--fortnite-blue) 100%);
+            padding: 14px;
+            align-self: stretch;
+        }
+
+        .loader {
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid var(--fortnite-yellow);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 10px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .glow-text {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 5px rgba(31, 162, 255, 0.5), 0 0 10px rgba(31, 162, 255, 0.3);
+            }
+            to {
+                text-shadow: 0 0 10px rgba(31, 162, 255, 0.8), 0 0 20px rgba(31, 162, 255, 0.5);
+            }
+        }
+
+        .footer {
+            padding: 15px;
+            text-align: center;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            margin-top: auto;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.8);
+            animation: fadeIn 0.3s;
+            backdrop-filter: blur(5px);
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0a2a48 0%, #1c3b5a 100%);
+            margin: 40% auto;
+            padding: 25px;
+            border: 2px solid var(--fortnite-blue);
+            border-radius: 16px;
+            width: 280px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-family: 'Burbank Big Condensed', 'Poppins', sans-serif;
+            color: var(--fortnite-yellow);
+            font-size: 1.4rem;
+            margin: 0 0 15px 0;
+            text-transform: uppercase;
+        }
+
+        .modal-option {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 12px auto;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+        #take-photo-btn {
+            background: linear-gradient(45deg, var(--fortnite-teal) 0%, var(--fortnite-blue) 100%);
+        }
+
+        #upload-photo-btn {
+            background: linear-gradient(45deg, var(--fortnite-purple) 0%, var(--fortnite-blue) 100%);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-modal:hover {
+            color: var(--fortnite-yellow);
+        }
+
+        /* Media queries for responsiveness */
+        @media (min-width: 768px) {
+            .app-container {
+                max-width: 480px;
+                height: 100vh;
+                margin: 0 auto;
+                border-left: 1px solid rgba(31, 162, 255, 0.2);
+                border-right: 1px solid rgba(31, 162, 255, 0.2);
+            }
+
+            .modal-content {
+                margin: 20% auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="app-header">
+            <div class="logo-area">
+                <h1>Fortnite Kicks Finder</h1>
+            </div>
+            <div class="tagline">From the Battle Bus to Your Doorstep</div>
+        </div>
+
+        <div class="app-body">
+            <div class="how-it-works">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps-container">
+                    <div class="step-card">
+                        <div class="step-icon">1</div>
+                        <div class="step-content">
+                            <div class="step-title">Capture</div>
+                            <div class="step-description">Take a screenshot or photo of your character wearing the shoes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon">2</div>
+                        <div class="step-content">
+                            <div class="step-title">Upload</div>
+                            <div class="step-description">Upload your image or take a new photo with the button below</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon">3</div>
+                        <div class="step-content">
+                            <div class="step-title">Auto-Detect</div>
+                            <div class="step-description">Our system will identify the shoes and populate the search field</div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon">4</div>
+                        <div class="step-content">
+                            <div class="step-title">Purchase</div>
+                            <div class="step-description">Click "Find On StockX" to buy your kicks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upload-section">
+                <div class="upload-button-area">
+                    <button id="upload-button" class="button" onclick="openImageOptionsModal()">Upload Fortnite Character</button>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+                </div>
+                <div class="loader" id="loader"></div>
+                <img id="image-preview" src="" alt="Image Preview">
+                <div class="status-area">
+                    <div id="status"></div>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" id="shoe-input" placeholder="Your shoe will appear here..." autofocus>
+                    <button id="search-button" class="button" onclick="searchStockX()">Find on StockX</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Not affiliated with Epic Games or StockX</p>
+        </div>
+    </div>
+
+    <div id="image-options-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeImageOptionsModal()">&times;</span>
+            <h3 class="modal-title">Choose an Option</h3>
+            <button id="take-photo-btn" class="button modal-option" onclick="takeMobilePhoto()">Take Photo</button>
+            <button id="upload-photo-btn" class="button modal-option" onclick="document.getElementById('file-input').click(); closeImageOptionsModal();">Upload Photo</button>
+        </div>
+    </div>
+
+    <script>
+        // Detect if the user is on a mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Modal functions
+        function openImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'block';
+        }
+
+        function closeImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('image-options-modal');
+            if (event.target == modal) {
+                closeImageOptionsModal();
+            }
+        }
+
+        // Simplified approach: Use native file input with capture attribute for mobile
+        function takeMobilePhoto() {
+            closeImageOptionsModal();
+            
+            // Create a temporary file input with capture attribute
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.accept = 'image/*';
+            
+            // If on mobile, use the camera directly
+            if (isMobileDevice()) {
+                tempInput.setAttribute('capture', 'environment'); // Use rear camera by default
+            }
+            
+            // Add event listener to handle the photo
+            tempInput.addEventListener('change', function(event) {
+                handleImageUpload(event);
+                // Remove the temp input after use
+                document.body.removeChild(tempInput);
+            });
+            
+            // Append to body (invisible) and trigger click
+            tempInput.style.display = 'none';
+            document.body.appendChild(tempInput);
+            tempInput.click();
+        }
+
+        // Function to handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            processImageFile(file);
+        }
+
+        // Function to process an image file
+        function processImageFile(file) {
+            const reader = new FileReader();
+            const preview = document.getElementById('image-preview');
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            // Show preview of the image
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+
+            // Show loading indicator
+            status.textContent = "Analyzing image...";
+            loader.style.display = 'block';
+
+            // Use the direct Roboflow Hosted Inference API URL
+            const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5?api_key=bqnYRrt4tXDQQ6SftsLE';
+
+            // Prepare form data for multipart/form-data submission
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch(apiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server responded with ${response.status}: ${text}`);
+                    });
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading indicator
+                loader.style.display = 'none';
+
+                // Check if predictions are available
+                if (data.predictions && data.predictions.length > 0) {
+                    // Sort predictions by confidence (highest first)
+                    const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                    // Get the class with highest confidence
+                    const topPrediction = sortedPredictions[0];
+                    const shoeClass = topPrediction.class;
+
+                    // Update the input field with the detected shoe class
+                    document.getElementById('shoe-input').value = shoeClass;
+
+                    status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                    status.className = 'glow-text';
+                } else {
+                    status.textContent = "No shoes detected in the image.";
+                    status.className = '';
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                status.textContent = "Error analyzing image. Please try again.";
+                status.className = '';
+
+                // Try alternative API approach (base64)
+                try64BitApproach(file);
+            });
+        }
+
+        // Try the base64 approach
+        function try64BitApproach(file) {
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            status.textContent = "Trying alternative method...";
+            loader.style.display = 'block';
+
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const base64 = fileReader.result.split(',')[1]; // Remove data:image/jpeg;base64,
+
+                // Prepare the request
+                const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5';
+                const requestData = {
+                    api_key: "bqnYRrt4tXDQQ6SftsLE",
+                    image: base64
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Server responded with ${response.status}: ${text}`);
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loader.style.display = 'none';
+
+                    // Check if predictions are available
+                    if (data.predictions && data.predictions.length > 0) {
+                        // Sort predictions by confidence (highest first)
+                        const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                        // Get the class with highest confidence
+                        const topPrediction = sortedPredictions[0];
+                        const shoeClass = topPrediction.class;
+
+                        // Update the input field with the detected shoe class
+                        document.getElementById('shoe-input').value = shoeClass;
+
+                        status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                        status.className = 'glow-text';
+                    } else {
+                        status.textContent = "No shoes detected in the image.";
+                        status.className = '';
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    status.textContent = "Error analyzing image. Please try again.";
+                    status.className = '';
+                });
+            };
+
+            fileReader.readAsDataURL(file);
+        }
+
+        // Function to search StockX
+        function searchStockX() {
+            const shoeInput = document.getElementById('shoe-input').value.trim();
+
+            if (shoeInput) {
+                // Format the search query for a URL
+                const searchQuery = encodeURIComponent(shoeInput);
+
+                // Create the StockX search URL
+                const stockXSearchUrl = `https://stockx.com/search?s=${searchQuery}`;
+
+                // Open in new tab to avoid cross-origin issues
+                window.open(stockXSearchUrl, '_blank');
+            }
+        }
+
+        // Allow the Enter key to trigger the search
+        document.getElementById('shoe-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchStockX();
+            }
+        });
+    </script>
+</body>
+</html>
