@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loot Kicks Finder</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        :root {
+            --primary: #5e17eb;
+            --secondary: #00d2ff;
+            --accent: #ffdd00;
+            --dark: #121212;
+            --light: #ffffff;
+            --grey-100: #f5f5f5;
+            --grey-200: #e0e0e0;
+            --grey-300: #b0b0b0;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--grey-100);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 40px;
+            margin-right: 15px;
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--primary);
+            letter-spacing: -0.5px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 40px 0;
+            border-radius: 0 0 20px 20px;
+            margin-bottom: 40px;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.5px;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 0 0 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        /* Steps */
+        .steps {
+            counter-reset: step;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            counter-increment: step;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            margin-right: 16px;
+            flex-shrink: 0;
+        }
+
+        .step-number::before {
+            content: counter(step);
+        }
+
+        .step-content {
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .step-desc {
+            color: var(--grey-300);
+            font-size: 0.95rem;
+        }
+
+        /* Image Upload */
+        .upload-section {
+            text-align: center;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(94, 23, 235, 0.3);
+        }
+
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(94, 23, 235, 0.4);
+        }
+
+        .upload-btn:active {
+            transform: translateY(0);
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .status-container {
+            margin-top: 20px;
+        }
+
+        #status {
+            font-size: 0.95rem;
+            color: var(--primary);
+            font-weight: 500;
+        }
+
+        .loader {
+            border: 3px solid var(--grey-200);
+            border-top: 3px solid var(--primary);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #image-preview {
+            max-width: 250px;
+            max-height: 250px;
+            border-radius: 12px;
+            margin: 20px auto;
+            display: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Search */
+        .search-section {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        #shoe-input {
+            flex-grow: 1;
+            padding: 14px 16px;
+            border: 2px solid var(--grey-200);
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        #shoe-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        #search-button {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        #search-button:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.2s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0}
+            to {opacity: 1}
+        }
+
+        .modal-content {
+            background: white;
+            margin: 15% auto;
+            padding: 30px;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .modal h3 {
+            margin-bottom: 20px;
+            color: var(--dark);
+        }
+
+        .modal-option {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+
+        #take-photo-btn {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        #upload-photo-btn {
+            background: var(--dark);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: var(--grey-300);
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-modal:hover {
+            color: var(--dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: var(--grey-300);
+            font-size: 0.8rem;
+            padding: 20px 0;
+        }
+
+        /* Glow effect */
+        .glow-text {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                color: var(--primary);
+            }
+            to {
+                color: var(--secondary);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .search-section {
+                flex-direction: column;
+            }
+
+            #search-button {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="https://al-lenhart.github.io/fortnitefootwear/lootkickslogo.png" alt="Loot Kicks Finder Logo" class="logo">
+                    <span class="logo-text">Loot Kicks Finder</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Find Your Fortnite Kicks In Real Life</h1>
+                <p>Because we don't expect you to know that the Jordan 5 SE Apple Green is actually called the Jordan 5 SE Oregon. We've got you covered!</p>
+            </div>
+        </div>
+    </section>
+
+    <main class="main">
+        <div class="container">
+            <div class="card">
+                <h2 class="card-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Capture</div>
+                            <div class="step-desc">Take a screenshot or photo of your character wearing the shoes (use the "Locker Loadout" screen for best results).</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Upload</div>
+                            <div class="step-desc">Tap the "Upload Image" button below to submit your screenshot or take a new photo.</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Auto-Detect</div>
+                            <div class="step-desc">Our system will identify the shoes and populate the search field automatically.</div>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number"></div>
+                        <div class="step-content">
+                            <div class="step-title">Purchase</div>
+                            <div class="step-desc">Click "Find On StockX" to see real-world versions of your virtual kicks!</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="upload-section">
+                    <button id="upload-button" class="upload-btn" onclick="openImageOptionsModal()">Upload Image</button>
+                    <input type="file" id="file-input" accept="image/*" onchange="handleImageUpload(event)">
+                    
+                    <div class="status-container">
+                        <div class="loader" id="loader"></div>
+                        <div id="status"></div>
+                    </div>
+                    
+                    <img id="image-preview" src="" alt="Image Preview">
+                    
+                    <div class="search-section">
+                        <input type="text" id="shoe-input" placeholder="Your shoe will appear here..." autofocus>
+                        <button id="search-button" onclick="searchStockX()">Find on StockX</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Not affiliated with Epic Games or StockX</p>
+        </div>
+    </footer>
+
+    <div id="image-options-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeImageOptionsModal()">&times;</span>
+            <h3>Choose an Option</h3>
+            <button id="take-photo-btn" class="button modal-option" onclick="takeMobilePhoto()">Take Photo</button>
+            <button id="upload-photo-btn" class="button modal-option" onclick="document.getElementById('file-input').click(); closeImageOptionsModal();">Upload Photo</button>
+        </div>
+    </div>
+
+    <script>
+        // Detect if the user is on a mobile device
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Modal functions
+        function openImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'block';
+        }
+
+        function closeImageOptionsModal() {
+            document.getElementById('image-options-modal').style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('image-options-modal');
+            if (event.target == modal) {
+                closeImageOptionsModal();
+            }
+        }
+
+        // Simplified approach: Use native file input with capture attribute for mobile
+        function takeMobilePhoto() {
+            closeImageOptionsModal();
+            
+            // Create a temporary file input with capture attribute
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.accept = 'image/*';
+            
+            // If on mobile, use the camera directly
+            if (isMobileDevice()) {
+                tempInput.setAttribute('capture', 'environment'); // Use rear camera by default
+            }
+            
+            // Add event listener to handle the photo
+            tempInput.addEventListener('change', function(event) {
+                handleImageUpload(event);
+                // Remove the temp input after use
+                document.body.removeChild(tempInput);
+            });
+            
+            // Append to body (invisible) and trigger click
+            tempInput.style.display = 'none';
+            document.body.appendChild(tempInput);
+            tempInput.click();
+        }
+
+        // Function to handle image upload
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            processImageFile(file);
+        }
+
+        // Function to process an image file
+        function processImageFile(file) {
+            const reader = new FileReader();
+            const preview = document.getElementById('image-preview');
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            // Show preview of the image
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+
+            reader.readAsDataURL(file);
+
+            // Show loading indicator
+            status.textContent = "Analyzing image...";
+            loader.style.display = 'block';
+
+            // Use the direct Roboflow Hosted Inference API URL
+            const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5?api_key=bqnYRrt4tXDQQ6SftsLE';
+
+            // Prepare form data for multipart/form-data submission
+            const formData = new FormData();
+            formData.append('file', file);
+
+            fetch(apiUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.text().then(text => {
+                        throw new Error(`Server responded with ${response.status}: ${text}`);
+                    });
+                }
+
+                return response.json();
+            })
+            .then(data => {
+                // Hide loading indicator
+                loader.style.display = 'none';
+
+                // Check if predictions are available
+                if (data.predictions && data.predictions.length > 0) {
+                    // Sort predictions by confidence (highest first)
+                    const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                    // Get the class with highest confidence
+                    const topPrediction = sortedPredictions[0];
+                    const shoeClass = topPrediction.class;
+
+                    // Update the input field with the detected shoe class
+                    document.getElementById('shoe-input').value = shoeClass;
+
+                    status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                    status.className = 'glow-text';
+                } else {
+                    status.textContent = "No shoes detected in the image.";
+                    status.className = '';
+                }
+            })
+            .catch(error => {
+                loader.style.display = 'none';
+                status.textContent = "Error analyzing image. Please try again.";
+                status.className = '';
+
+                // Try alternative API approach (base64)
+                try64BitApproach(file);
+            });
+        }
+
+        // Try the base64 approach
+        function try64BitApproach(file) {
+            const status = document.getElementById('status');
+            const loader = document.getElementById('loader');
+
+            status.textContent = "Trying alternative method...";
+            loader.style.display = 'block';
+
+            const fileReader = new FileReader();
+            fileReader.onload = function() {
+                const base64 = fileReader.result.split(',')[1]; // Remove data:image/jpeg;base64,
+
+                // Prepare the request
+                const apiUrl = 'https://detect.roboflow.com/buy-fortnite-shoes-irl/5';
+                const requestData = {
+                    api_key: "bqnYRrt4tXDQQ6SftsLE",
+                    image: base64
+                };
+
+                fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.text().then(text => {
+                            throw new Error(`Server responded with ${response.status}: ${text}`);
+                        });
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    // Hide loading indicator
+                    loader.style.display = 'none';
+
+                    // Check if predictions are available
+                    if (data.predictions && data.predictions.length > 0) {
+                        // Sort predictions by confidence (highest first)
+                        const sortedPredictions = data.predictions.sort((a, b) => b.confidence - a.confidence);
+
+                        // Get the class with highest confidence
+                        const topPrediction = sortedPredictions[0];
+                        const shoeClass = topPrediction.class;
+
+                        // Update the input field with the detected shoe class
+                        document.getElementById('shoe-input').value = shoeClass;
+
+                        status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                        status.className = 'glow-text';
+                    } else {
+                        status.textContent = "No shoes detected in the image.";
+                        status.className = '';
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    status.textContent = "Error analyzing image. Please try again.";
+                    status.className = '';
+                });
+            };
+
+            fileReader.readAsDataURL(file);
+        }
+
+        // Function to search StockX
+        function searchStockX() {
+            const shoeInput = document.getElementById('shoe-input').value.trim();
+
+            if (shoeInput) {
+                // Format the search query for a URL
+                const searchQuery = encodeURIComponent(shoeInput);
+
+                // Create the StockX search URL
+                const stockXSearchUrl = `https://stockx.com/search?s=${searchQuery}`;
+
+                // Open in new tab to avoid cross-origin issues
+                window.open(stockXSearchUrl, '_blank');
+            }
+        }
+
+        // Allow the Enter key to trigger the search
+        document.getElementById('shoe-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchStockX();
+            }
+        });
+    </script>
+</body>
+</html>
