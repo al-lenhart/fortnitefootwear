@@ -72,41 +72,6 @@
             letter-spacing: -0.5px;
         }
 
-        /* Beta badge styling */
-        .beta-badge {
-            background-color: var(--accent);
-            color: var(--dark);
-            font-weight: 800;
-            font-size: 0.8rem;
-            padding: 5px 12px;
-            border-radius: 999px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
-            position: relative;
-            margin-left: 12px;
-            transform: rotate(-5deg);
-            border: 2px solid rgba(0, 0, 0, 0.1);
-        }
-
-        .beta-badge::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: repeating-linear-gradient(
-                -45deg,
-                rgba(0, 0, 0, 0.05),
-                rgba(0, 0, 0, 0.05) 5px,
-                transparent 5px,
-                transparent 10px
-            );
-            border-radius: 999px;
-            z-index: -1;
-        }
-
         /* Hero Section with Fortnite elements */
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -594,11 +559,6 @@
                 height: 40px;
                 font-size: 1rem;
             }
-            
-            .beta-badge {
-                font-size: 0.7rem;
-                padding: 4px 10px;
-            }
         }
     </style>
 </head>
@@ -609,7 +569,6 @@
                 <div class="logo-container">
                     <img src="https://al-lenhart.github.io/fortnitefootwear/lootkickslogo.png" alt="Loot Kicks Finder Logo" class="logo">
                     <span class="logo-text">Loot Kicks Finder</span>
-                    <span class="beta-badge">BETA</span>
                 </div>
             </div>
         </div>
@@ -674,7 +633,7 @@
                     <img id="image-preview" src="" alt="Image Preview">
                     
                     <div class="search-section">
-                        <input type="text" id="shoe-input" placeholder="Your shoe will appear here...">
+                        <input type="text" id="shoe-input" placeholder="Your shoe will appear here..." autofocus>
                         <button id="search-button" onclick="searchStockX()">Find on StockX</button>
                     </div>
                 </div>
@@ -875,4 +834,46 @@
                         const topPrediction = sortedPredictions[0];
                         const shoeClass = topPrediction.class;
 
-                        // Update the input fiel
+                        // Update the input field with the detected shoe class
+                        document.getElementById('shoe-input').value = shoeClass;
+
+                        status.textContent = `Detected: ${shoeClass} (${Math.round(topPrediction.confidence * 100)}% confidence)`;
+                        status.className = 'glow-text';
+                    } else {
+                        status.textContent = "No shoes detected in the image.";
+                        status.className = '';
+                    }
+                })
+                .catch(error => {
+                    loader.style.display = 'none';
+                    status.textContent = "Error analyzing image. Please try again.";
+                    status.className = '';
+                });
+            };
+
+            fileReader.readAsDataURL(file);
+        }
+
+        // Function to search StockX
+        function searchStockX() {
+            const shoeInput = document.getElementById('shoe-input').value.trim();
+
+            if (shoeInput) {
+                // Format the search query for a URL
+                const searchQuery = encodeURIComponent(shoeInput);
+
+                // Create the StockX search URL
+                const stockXSearchUrl = `https://stockx.com/search?s=${searchQuery}`;
+
+                // Open in new tab to avoid cross-origin issues
+                window.open(stockXSearchUrl, '_blank');
+            }
+        }
+
+        // Allow the Enter key to trigger the search
+        document.getElementById('shoe-input').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                searchStockX();
+            }
+        });
+    </script>
